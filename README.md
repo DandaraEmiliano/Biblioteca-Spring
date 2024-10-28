@@ -46,4 +46,5 @@ Allows borrowing a book by title.
 
 ## Parameters:
 titulo (String): The title of the book to be borrowed.
+
 Example: /emprestar?titulo=O%20Senhor%20dos%20Anéis
