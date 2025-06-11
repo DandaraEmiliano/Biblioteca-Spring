@@ -18,7 +18,7 @@ public class EmprestimoService {
     }
 
     public String emprestarLivro(String titulo) {
-        Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
+        Optional<Livro> livroOptional = livroRepository.findByTituloIgnoreCase(titulo);
 
         if (livroOptional.isPresent()) {
             Livro livro = livroOptional.get();
