@@ -32,4 +32,9 @@ public class BibliotecaController {
     public String emprestarLivro(@RequestParam String titulo) {
         return emprestimoService.emprestarLivro(titulo);
     }
+
+    @PostMapping("/devolver")
+    public String devolverLivro(@RequestParam String titulo) {
+        return emprestimoService.devolverLivro(titulo);
+    }
 }
