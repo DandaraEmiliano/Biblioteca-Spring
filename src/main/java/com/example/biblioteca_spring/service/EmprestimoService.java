@@ -33,4 +33,20 @@ public class EmprestimoService {
             return "Livro não disponível ou não encontrado.";
         }
     }
+
+    public String devolverLivro(String titulo) {
+        Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
+        if (livroOptional.isPresent()) {
+            Livro livro = livroOptional.get();
+            if (!livro.isDisponivel()) {
+                livro.setDisponivel(true);
+                livroRepository.save(livro);
+                return "Livro devolvido: " + titulo;
+            } else {
+                return "Livro não estava emprestado.";
+            }
+        } else {
+            return "Livro não encontrado.";
+        }
+    }
 }
