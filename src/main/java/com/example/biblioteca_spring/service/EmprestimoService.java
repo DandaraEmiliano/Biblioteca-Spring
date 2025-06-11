@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Serviço responsável por emprestar e devolver livros.
+ */
+
 @Service
 public class EmprestimoService {
 
@@ -17,20 +21,43 @@ public class EmprestimoService {
         this.livroRepository = livroRepository;
     }
 
-    public String emprestarLivro(String titulo) {
+    /**
+     * Tenta emprestar um livro pelo título.
+     */
+    public EmprestimoStatus emprestarLivro(String titulo) {
         Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
 
-        if (livroOptional.isPresent()) {
-            Livro livro = livroOptional.get();
-            if (livro.isDisponivel()) {
-                livro.setDisponivel(false);
-                livroRepository.save(livro);
-                return "Livro emprestado: " + titulo;
-            } else {
-                return "Livro já foi emprestado.";
-            }
-        } else {
-            return "Livro não disponível ou não encontrado.";
+        if (livroOptional.isEmpty()) {
+            return EmprestimoStatus.LIVRO_NAO_ENCONTRADO;
         }
+
+        Livro livro = livroOptional.get();
+        if (!livro.isDisponivel()) {
+            return EmprestimoStatus.LIVRO_JA_EMPRESTADO;
+        }
+
+        livro.setDisponivel(false);
+        livroRepository.save(livro);
+        return EmprestimoStatus.SUCESSO;
+    }
+
+    /**
+     * Tenta devolver um livro pelo título.
+     */
+    public EmprestimoStatus devolverLivro(String titulo) {
+        Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
+
+        if (livroOptional.isEmpty()) {
+            return EmprestimoStatus.LIVRO_NAO_ENCONTRADO;
+        }
+
+        Livro livro = livroOptional.get();
+        if (livro.isDisponivel()) {
+            return EmprestimoStatus.LIVRO_JA_DEVOLVIDO;
+        }
+
+        livro.setDisponivel(true);
+        livroRepository.save(livro);
+        return EmprestimoStatus.SUCESSO;
     }
 }
