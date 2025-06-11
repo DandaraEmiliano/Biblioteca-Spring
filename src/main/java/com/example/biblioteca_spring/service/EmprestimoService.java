@@ -4,6 +4,7 @@ import com.example.biblioteca_spring.model.Livro;
 import com.example.biblioteca_spring.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class EmprestimoService {
         this.livroRepository = livroRepository;
     }
 
+    @Transactional
     public String emprestarLivro(String titulo) {
         Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
 
@@ -31,6 +33,24 @@ public class EmprestimoService {
             }
         } else {
             return "Livro não disponível ou não encontrado.";
+        }
+    }
+
+    @Transactional
+    public String devolverLivro(String titulo) {
+        Optional<Livro> livroOptional = livroRepository.findByTitulo(titulo);
+
+        if (livroOptional.isPresent()) {
+            Livro livro = livroOptional.get();
+            if (!livro.isDisponivel()) {
+                livro.setDisponivel(true);
+                livroRepository.save(livro);
+                return "Livro devolvido: " + titulo;
+            } else {
+                return "Livro já está disponível.";
+            }
+        } else {
+            return "Livro não encontrado.";
         }
     }
 }
